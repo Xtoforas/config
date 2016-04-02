@@ -1,0 +1,6 @@
+startup_message off
+hardstatus             alwayslastline
+hardstatus alwayslastline "Host %H %l|%Y-%m-%d %c|%w"
+defscrollback 10000
+terminfo xterm* ti=:te=
+altscreen on

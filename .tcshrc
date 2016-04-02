@@ -1,0 +1,330 @@
+if ( $?prompt ) then
+
+#---------------------------------------
+# Clean-up path
+#---------------------------------------
+setenv NEW_EMT false
+
+#if ( $NEW_EMT == false ) then
+#    echo "Using Old EMT"
+#    set EMT_PL = /tools/emt/bin/emt.pl
+#else
+#    echo "Using NEW EMT"
+#    set EMT_PL = /tools/emt_refresh/bin/emt.pl
+#endif
+#echo "Unload EMT"
+#eval "`$EMT_PL -cq`"
+unsetenv PATH
+unsetenv LD_LIBRARY_PATH
+unsetenv MANPATH
+
+setenv BUILD_ENV_SET false
+
+if ( `hostname | grep -o wl-ucs` == "wl-ucs" ) then
+    setenv UCS true
+else
+    setenv UCS false
+endif
+
+
+# This script allows for branch completion of GIT commands
+
+if ($UCS == true) then
+  source ~/.git-completion.tcsh
+endif
+
+#---------------------------------------
+# Environment specific commands
+#---------------------------------------
+set HOST = `hostname`
+set history = 4096
+set autolist                  # Show options when autocompleting
+set autocorrect               # Basic corrections when completing
+set complete = enhance        # Smarter completion
+set autoexpand                # Use history to aid expansion
+set nobeep                    # Don't beep
+set color                     # Colorize stuff
+set savehist = 4096           # upon logout save last 4096 commands
+set filec                     # set file completion
+set ignoreeof				          # prvents logout with ctrl-D
+set notify				            # notify when jobs complete
+set listlinks                 # Show '>' for symlink to dir, and '&' for symlink to nowhere
+set correct=all               # Possible values : cmd complete all # Put it to extreme auto.
+set listjobs                  # After a 'Ctrl-Z', it lists all the jobs
+set printexitvalue            # If the exit value is non-zero, print it.  # Very handy when you do scripting.
+set rmstar                    # Ask for confirmation when 'rm *'.
+set fignore=(.o)              # Files that are to be ignored from completion.  # These are the .o files that GCC produces. Usually you do not touch them.
+# Do "man tcsh" to find about more data that can be shown
+# with this command. I have used only those that are available
+# on a Linux box without kernel debugging enabled.
+# That is, a stock kernel from a distribution.
+set time=(8 "\
+Time spent in user mode   (CPU seconds) : %Us\
+Time spent in kernel mode (CPU seconds) : %Ss\
+Total time                              : %Es\
+CPU utilisation (percentage)            : %P\
+Times the process was swapped           : %W\
+Times of major page faults              : %F\
+Times of minor page faults              : %R")
+# Setting the 'echo_style' parameter to 'both'.
+# Other values are bsd, sysv, etc.
+# This way, both 'set -n' and set '\003' styles will work.
+# On Linux it's already set to 'both.
+# Submission by miklos.
+set echo_style=both
+
+umask 022                     # set umask
+setenv HOSTV `uname -s`
+
+#Initialize the path to something sane
+#Take things from user directory always
+setenv PATH /usr/bin:/usr/local/bin:/bin
+setenv LD_LIBRARY_PATH /tools/cfr/pcre/6.4/lib
+setenv MANPATH 
+if ( `hostname | grep -o wl-bups` == "wl-bups" || `hostname | grep -o wl-ucs` == "wl-ucs" ) then
+    setenv CALLISTO true
+else
+    setenv CALLISTO false
+endif
+
+#----------------------------------------
+# Set Global Environment Variables
+#----------------------------------------
+if ("`printenv OSTYPE`" == "solaris") then
+	setenv OS SOLARIS
+else if ("`printenv OSTYPE`" == "linux") then
+	setenv OS LINUX
+endif
+
+setenv EDITOR gvim
+
+#----------------------------------------
+# Turn off Auto-Logout
+#----------------------------------------
+
+set autologout=0
+set symlinks=chase
+
+#---------------------------------------
+# Generic, Waterloo-specific
+#---------------------------------------
+echo "Loading WAT cshrc"
+
+#----------------------------------------
+# wat.cshrc                  	    	
+#				    	
+# Waterloo Standard Environment	    	
+# Copyright(c) 1988-2003	    	
+# LSI Logic Corp.		    	
+# This file may be freely copied and	
+# used provided that this message is	
+# copied in its entirety		
+#----------------------------------------
+
+#----------------------------------------
+# Pre cshrc env variables
+#----------------------------------------
+setenv SITE WAT
+
+#----------------------------------------
+# Terminal initialization
+#----------------------------------------
+stty erase   
+bindkey "\e[1~" beginning-of-line  # Home
+bindkey "\e[7~" beginning-of-line  # Home rxvt
+bindkey "\e[2~" overwrite-mode     # Ins
+bindkey "\e[3~" delete-char        # Delete
+bindkey "\e[4~" end-of-line        # End
+bindkey "\e[8~" end-of-line        # End rxvt
+
+#----------------------------------------
+# set up basic path - modified later by some of the setup files sourced
+#----------------------------------------
+if ("`printenv MANPATH`" == "") then
+  setenv MANPATH /usr/man:/usr/share/man:/usr/local/man:/usr/atria/man:/usr/dt/man:/usr/openwin/man
+else
+	setenv MANPATH ${MANPATH}:/usr/man:/usr/share/man:/usr/local/man:/usr/atria/man:/usr/dt/man:/usr/openwin/man
+endif
+
+if ("`printenv LD_LIBRARY_PATH`" == "") then
+	setenv LD_LIBRARY_PATH /lib:/lib64:/usr/local/lib:/usr/lib:/usr/lib64:/usr/dt/lib:/usr/openwin/lib:/usr/ccs/lib:/usr/atria/lib:/lsi/soft/CFR/lib
+else
+	setenv LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:/lib:/lib64:/usr/local/lib:/usr/lib:/usr/lib64:/usr/dt/lib:/usr/openwin/lib:/usr/ccs/lib:/usr/atria/lib:/lsi/soft/CFR/lib
+endif
+
+#----------------------------------------
+# Aliases
+#----------------------------------------
+if ( -f /lsi/vp/bed_shared/env/rc/wat.aliases ) then 
+	source /lsi/vp/bed_shared/env/rc/wat.aliases
+	echo "Aliases Configured"
+endif
+
+
+#---------------------------------------
+# Firmware
+#---------------------------------------
+if ( $CALLISTO == false ) then
+    echo "Loading Global FW cshrc"
+    if ( $NEW_EMT == false ) then
+        #source /lsi/vp/bed_shared/env/rc/wat.sw.cshrc
+        #source /lsi/vp/bed_shared/env/rc/wat.sw-gcc483.cshrc
+    else
+        source /tools/emt_refresh/wat.sw.cshrc
+    endif 
+endif
+
+#---------------------------------------
+# Path updates 
+#---------------------------------------
+
+#if ( $CALLISTO == true ) then
+#    alias sudo "sudo env PATH=$PATH"
+#endif
+
+#setenv PATH /proj/atria/bin:/lsi/vp/bed_shared/ucm/scripts:/lsi/vp/bed_shared/dev/scripts:.:/usr/atria/bin:/magnum/tools/altera/13.1/nios2eds/bin/gnu/H-i686-pc-linux-gnu/bin:/magnum/tools/altera/13.1/nios2eds/sdk2/bin:/magnum/tools/altera/13.1/nios2eds/bin:/magnum/oss/bin:/sbin:/lsi/soft/gnu/gnu_sh_utils/0.0.1/bin:${PATH}:
+if ( $CALLISTO == true ) then
+    setenv PATH ${PATH}:/proj/atria/bin:/lsi/vp/bed_shared/ucm/scripts:/lsi/vp/bed_shared/dev/scripts:.:/usr/atria/bin:/sbin
+    #setenv PATH ${PATH}:/proj/atria/bin:/lsi/vp/bed_shared/ucm/scripts:/lsi/vp/bed_shared/dev/scripts:.:/usr/atria/bin:/magnum/tools/altera/14.1a10s_656/nios2eds/bin/gnu/H-x86_64-pc-linux-gnu/bin:/magnum/tools/altera/14.1a10s_656/nios2eds/sdk2/bin:/magnum/tools/altera/14.1a10s_656/nios2eds/bin:/sbin
+else
+    setenv PATH ${PATH}:/proj/atria/bin:/lsi/vp/bed_shared/ucm/scripts:/lsi/vp/bed_shared/dev/scripts:.:/usr/atria/bin:/magnum/oss/bin:/sbin
+    #setenv PATH ${PATH}:/proj/atria/bin:/lsi/vp/bed_shared/ucm/scripts:/lsi/vp/bed_shared/dev/scripts:.:/usr/atria/bin:/magnum/tools/altera/14.1a10s_656/nios2eds/bin/gnu/H-x86_64-pc-linux-gnu/bin:/magnum/tools/altera/14.1a10s_656/nios2eds/sdk2/bin:/magnum/tools/altera/14.1a10s_656/nios2eds/bin:/magnum/oss/bin:/sbin
+endif
+
+#VIM!!!!
+if ($UCS == false && $CALLISTO == false) then
+    setenv PATH /lsi/home/colekas/bin:${PATH}:/lsi/soft/CFR/bin
+endif
+
+if ("$HOSTV" == "Linux") then
+    #set prompt = "<%B%t %n@%m %C\>%#%b "
+    set prompt = "[%B%t %n@%{\033[1;31m%}%m%{\033[0m%} %C]%#%b "
+else if ("$HOSTV" == "SunOS") then
+    set prompt = "`whoami`@`hostname`\[\!]: "
+    setenv PATH /vobs/RTOS/tornado/host/sun4-solaris2/bin:$PATH
+endif
+
+#---------------------------------------
+# Environment Variables
+#---------------------------------------
+set CLIENT=`echo $SSH_CLIENT | cut -d " " -f 1`
+
+echo "$CLIENT"
+
+if ( "$CLIENT" == "172.25.9.32" || "$CLIENT" == "172.25.9.31" ) then
+    echo "Connecting from GoneGirl"
+    #if ( $CALLISTO == false && `hostname | grep -o wl-bups` == "wl-bups") then
+        xauth add "$CLIENT":0 MIT-MAGIC-COOKIE-1 20fa9430eb080a136702970f9f6e2bdb
+    #endif
+else if( "$CLIENT" == "172.25.9.109" ) then
+    echo "Connecting from OldBoy"
+    if ( $CALLISTO == false ) then
+        xauth add "$CLIENT":0 MIT-MAGIC-COOKIE-1 5b689a8505dbe07d215d033115527fa9
+    endif
+endif
+
+setenv DISPLAY "$CLIENT":0.0
+setenv EDITOR gvim
+set fignore=.o
+set color=ls-F
+set nobeep
+set complete=enhance
+set histdup='prev'
+limit coredumpsize unlimited
+#limit coredumpsize 0
+# Watch any(1) other users every 0 seconds from any(2) console, 
+# when logging in/out.(I like this one!)
+# It gives something like "root has logged on tty1 from local."
+set watch=(0 any any)
+
+# Format of output string when someone logins or logouts.(Look above)
+# Hmm, can't be internationalised easily.
+set who="%n has %a %l from %M."
+#---------------------------------------
+# Alias
+#---------------------------------------
+
+if ( `hostname | grep -o watengbuild` == "watengbuild" ) then
+    alias mfw             "make -j16 interfaces DEBUG=1 CWARE=1 GCCV=43 FW_ARCH=D7 && make -j16 DEBUG=1 CWARE=1 GCCV=43 FW_ARCH=D7"
+    alias mr12cpufw       "make clean comp all cpu=x86 FWROOT=/lsi/home/colekas/src/r12cpu/build && cdr xcode && cd interface/ProXCodeHostIFApp && make clean all platform=cpu_intel_xeon cpu=x86 FWROOT=/lsi/home/colekas/src/r12cpu/build && cd /vobs/cware/x86/os_wrapper/linux/ && make clean all cpu=x86 && cd /vobs/cware/x86/bsp && make clean all cpu=x86 && cd /vobs/cware/x86/osal && make clean all cpu=x86 && cd /vobs/cware/x86/startup && make clean all cpu=x86 FWROOT=/lsi/home/colekas/src/r12cpu/build"
+    alias gvim            "/magnum/oss/bin/gvim"
+    alias v               "gvim"
+    alias vim             "/magnum/oss/bin/vim"
+    unsetenv EDITOR
+    setenv EDITOR /magnum/oss/bin/gvim
+else
+    alias mfw             "make interfaces CWARE=1 GCCV=43 FW_ARCH=D7 && make CWARE=1 GCCV=43 FW_ARCH=D7"
+    alias v               "gvim"
+endif
+alias ls              "ls-F"
+alias ll              "ls --color -lt"
+alias la              "ls -la"
+alias lsnorm          "ls --color=never"
+alias v               "gvim"
+alias tarbz           "gtar xvjf"
+alias targz           "tar xzvf"
+alias reload          "unalias -a; source ~/.tcshrc"
+alias edit            "v ~/.tcshrc"
+alias msw             "make prefix='$HOME/sw'"
+alias fco             "cleartool lscheckout -cview -me -avobs"
+alias blist           "cleartool lstype brtype:\!*"
+alias calist          "cleartool describe -cact -fmt %c"
+alias llist           "cleartool lstype lbtype:\!*"
+alias lfind           "ct find -all -version 'lbtype(\!*)' -print"
+alias block           "cleartool lock brtype:\!*"
+alias llock           "cleartool lock lbtype:\!*"
+alias bunlock         "cleartool unlock brtype:\!*"
+alias lunlock         "cleartool unlock lbtype:\!*"
+alias bfind           "ct find -all -branch 'brtype(\!*)' -print"
+alias creplace        "cleartool chevent -replace -cfile /vobs/cware/\!*.txt brtype:\!*"
+alias mfwdxt          "make interfaces CWARE=1 GCCV=43 FW_ARCH=DXT && make CWARE=1 GCCV=43 FW_ARCH=DXT"
+alias ucm-makebaseline "/ms/WaterlooHg/hg/firmware/ucm/scripts/ucm-makebaseline \!*"
+alias pp              "echo $PATH | tr : '\n'"
+alias pld             "echo $LD_LIBRARY_PATH | tr : '\n'"
+alias abt             "make FW_ARCH=D7 GCCV=43 BRINGUP=1 && make FW_ARCH=D7 GCCV=43 BRINGUP=1 VERIF=BRINGUP DISTRIB=1"
+alias catcs           "cleartool catcs | grep -v '^#'"
+alias gengg           "make VERIF=GOLDGEN FW_ARCH=D7 DISTRIB=1"
+alias pst             "ps axjf"
+#alias make            "if ($?BUILD_ENV_SET && {eval 'if ($BUILD_ENV_SET == false) then echo \"Please source ~colekas/.oldenv or ~colekas/.cpuenv\" else make endif})"
+
+unsetenv LD_LIBRARY_PATH
+#---------------------------------------
+# Completion Variables
+#---------------------------------------
+complete cdr 'p,1,`lsnorm ~/.cdr/`,'
+
+#---------------------------------------
+# ClearTool
+#---------------------------------------
+if ( $CALLISTO == false ) then
+  set views=(`cleartool lsview -short | grep $USER`)
+  set cusage=(`c help | grep Usage | sed "s/Usage: \(.*\) | \(.*\)/Usage: \1,\2/g" | awk '{split($2,t,","); print t[1]; print t[2]}' | grep -v ^$`)
+endif
+
+complete {c,ct,cleartool} 'p/1/$cusage/' \
+'n/help/$cusage/' \
+'n/-to/`cleartool lsview -short | grep $USER`/' \
+'n/rebase/(-gr -graphical -rec -recommended -com -complete -pre -preview)/' \
+'N/rebase/(-gr -graphical -rec -recommended -com -complete -pre -preview)/' \
+'n/startview/`cleartool lsview -short | grep $USER`/' \
+'N/startview/`cleartool lsview -short | grep $USER`/' \
+'n/rmview/`cleartool lsview -short | grep $USER`/' \
+'n/setview/`cleartool lsview -short | grep $USER`/' \
+'n/deliver/(-to -res -complete)/' \
+'n/-tag/`cleartool lsview -short`/'
+
+
+setenv SGE_ROOT /magnum/sge/prod   # New production engine installed by Tim.
+if (-f $SGE_ROOT/default/common/settings.csh) source $SGE_ROOT/default/common/settings.csh
+
+if ( $CALLISTO == false ) then
+  setenv EMTSOFTPATH /tools/emt_refresh/soft
+  emt -S gnu/make/3.80 /tools/emt_refresh/modules/centos/make/3.81
+  #emt -S gnu/ctags/5.5.2 /tools/emt_refresh/modules/centos/ctags/5.6
+  emt -S gnu/vim/6.3 /tools/emt_refresh/modules/centos/vim-enhanced/7.0.109
+  #emt -S centos/python/2.4.3 /tools/emt_refresh/modules/custom/python/2.7.7
+  emt -S gnu/perl/5.8.3 /tools/emt_refresh/modules/centos/perl/5.8.8
+  #emt -S gnu/sed/3.02 /tools/emt_refresh/modules/centos/sed/4.1.5
+  #emt -S gnu/binutils/2.13.2.1 /tools/emt_refresh/modules/centos/binutils/2.17.50.0.6
+endif
+endif
