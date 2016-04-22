@@ -3,17 +3,16 @@
 # Clear emt
 source ~colekas/.clearemt
 
+# If a parent shell hasn't set LD_LIBRARY_PATH yet, set it to an initial value.
+if ("`printenv LD_LIBRARY_PATH`" == "") then
+  setenv LD_LIBRARY_PATH /lib:/lib64:/usr/local/lib:/usr/lib:/usr/lib64:/usr/atria/lib
+else
+  setenv LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:/lib:/lib64:/usr/local/lib:/usr/lib:/usr/lib64:/usr/atria/lib
+endif
+
 #---------------------------------------
 # Linux C-Ware toolchain
 #---------------------------------------
-setenv LD_LIBRARY_PATH /tools/cfr/pcre/6.4/lib
-
-if ("`printenv LD_LIBRARY_PATH`" == "") then
-	setenv LD_LIBRARY_PATH /lib:/lib64:/usr/local/lib:/usr/lib:/usr/lib64:/usr/dt/lib:/usr/openwin/lib:/usr/ccs/lib:/usr/atria/lib:/lsi/soft/CFR/lib
-else
-	setenv LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:/lib:/lib64:/usr/local/lib:/usr/lib:/usr/lib64:/usr/dt/lib:/usr/openwin/lib:/usr/ccs/lib:/usr/atria/lib:/lsi/soft/CFR/lib
-endif
-
 if ( $CALLISTO == false ) then
     if ( `uname` == "Linux" ) then
         echo "Loading C-Ware Linux toolchain"
@@ -21,14 +20,6 @@ if ( $CALLISTO == false ) then
         setenv LD_LIBRARY_PATH  ${LD_LIBRARY_PATH}:/sw/tools/tornado22/host/x86-linux2/lib
     endif
 endif
-
-# If a parent shell hasn't set LD_LIBRARY_PATH yet, set it to an initial value.
-if ( ! $?LD_LIBRARY_PATH ) then
-	setenv LD_LIBRARY_PATH /lib:/usr/local/lib:/usr/lib:/lsi/soft/CFR/lib:/usr/dt/lib:/usr/openwin/lib:/usr/ccs/lib:/usr/atria/lib
-endif
-
-# Set PATH for running E6AM
-#setenv PATH /vobs/vlsi_release/e60/am/app/${OS}:${PATH}
 
 # Set up EMT if default loadenv view is not configured
 if ( ! $?UCM_DFLT_VIEW ) then
@@ -43,6 +34,3 @@ if ( ! $?UCM_DFLT_VIEW ) then
 
     eval "`$EMT_PL e60/sw/1.0`"
 endif
-
-setenv BUILD_ENV_SET true
-#setenv PATH /usr/bin:$PATH

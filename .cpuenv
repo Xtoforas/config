@@ -1,14 +1,14 @@
 #!/bin/tcsh
 
+# Clear emt
 source ~colekas/.clearemt
 
 # If a parent shell hasn't set LD_LIBRARY_PATH yet, set it to an initial value.
-if ( ! $?LD_LIBRARY_PATH ) then
-	setenv LD_LIBRARY_PATH /lib:/usr/local/lib:/usr/lib:/lsi/soft/CFR/lib:/usr/dt/lib:/usr/openwin/lib:/usr/ccs/lib:/usr/atria/lib
+if ("`printenv LD_LIBRARY_PATH`" == "") then
+  setenv LD_LIBRARY_PATH /lib:/lib64:/usr/local/lib:/usr/lib:/usr/lib64:/usr/atria/lib
+else
+  setenv LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:/lib:/lib64:/usr/local/lib:/usr/lib:/usr/lib64:/usr/atria/lib
 endif
-
-# Set PATH for running E6AM
-#setenv PATH /vobs/vlsi_release/e60/am/app/${OS}:${PATH}
 
 # Set up EMT if default loadenv view is not configured
 if ( ! $?UCM_DFLT_VIEW ) then
@@ -23,4 +23,3 @@ if ( ! $?UCM_DFLT_VIEW ) then
 
     eval "`$EMT_PL e60/sw/gcc-4.8.3`"
 endif
-#setenv PATH /usr/bin:$PATH

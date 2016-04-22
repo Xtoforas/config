@@ -3,17 +3,6 @@ if ( $?prompt ) then
 #---------------------------------------
 # Clean-up path
 #---------------------------------------
-setenv NEW_EMT false
-
-#if ( $NEW_EMT == false ) then
-#    echo "Using Old EMT"
-#    set EMT_PL = /tools/emt/bin/emt.pl
-#else
-#    echo "Using NEW EMT"
-#    set EMT_PL = /tools/emt_refresh/bin/emt.pl
-#endif
-#echo "Unload EMT"
-#eval "`$EMT_PL -cq`"
 unsetenv PATH
 unsetenv LD_LIBRARY_PATH
 unsetenv MANPATH
@@ -28,7 +17,6 @@ endif
 
 
 # This script allows for branch completion of GIT commands
-
 if ($UCS == true) then
   source ~/.git-completion.tcsh
 endif
@@ -46,8 +34,8 @@ set nobeep                    # Don't beep
 set color                     # Colorize stuff
 set savehist = 4096           # upon logout save last 4096 commands
 set filec                     # set file completion
-set ignoreeof				          # prvents logout with ctrl-D
-set notify				            # notify when jobs complete
+set ignoreeof                 # prvents logout with ctrl-D
+set notify                    # notify when jobs complete
 set listlinks                 # Show '>' for symlink to dir, and '&' for symlink to nowhere
 set correct=all               # Possible values : cmd complete all # Put it to extreme auto.
 set listjobs                  # After a 'Ctrl-Z', it lists all the jobs
@@ -80,7 +68,7 @@ setenv HOSTV `uname -s`
 #Take things from user directory always
 setenv PATH /usr/bin:/usr/local/bin:/bin
 setenv LD_LIBRARY_PATH /tools/cfr/pcre/6.4/lib
-setenv MANPATH 
+setenv MANPATH
 if ( `hostname | grep -o wl-bups` == "wl-bups" || `hostname | grep -o wl-ucs` == "wl-ucs" ) then
     setenv CALLISTO true
 else
@@ -91,9 +79,9 @@ endif
 # Set Global Environment Variables
 #----------------------------------------
 if ("`printenv OSTYPE`" == "solaris") then
-	setenv OS SOLARIS
+  setenv OS SOLARIS
 else if ("`printenv OSTYPE`" == "linux") then
-	setenv OS LINUX
+  setenv OS LINUX
 endif
 
 setenv EDITOR gvim
@@ -111,14 +99,14 @@ set symlinks=chase
 echo "Loading WAT cshrc"
 
 #----------------------------------------
-# wat.cshrc                  	    	
-#				    	
-# Waterloo Standard Environment	    	
-# Copyright(c) 1988-2003	    	
-# LSI Logic Corp.		    	
-# This file may be freely copied and	
-# used provided that this message is	
-# copied in its entirety		
+# wat.cshrc
+#
+# Waterloo Standard Environment
+# Copyright(c) 1988-2003
+# LSI Logic Corp.
+# This file may be freely copied and
+# used provided that this message is
+# copied in its entirety
 #----------------------------------------
 
 #----------------------------------------
@@ -129,7 +117,7 @@ setenv SITE WAT
 #----------------------------------------
 # Terminal initialization
 #----------------------------------------
-stty erase   
+stty erase 
 bindkey "\e[1~" beginning-of-line  # Home
 bindkey "\e[7~" beginning-of-line  # Home rxvt
 bindkey "\e[2~" overwrite-mode     # Ins
@@ -143,52 +131,27 @@ bindkey "\e[8~" end-of-line        # End rxvt
 if ("`printenv MANPATH`" == "") then
   setenv MANPATH /usr/man:/usr/share/man:/usr/local/man:/usr/atria/man:/usr/dt/man:/usr/openwin/man
 else
-	setenv MANPATH ${MANPATH}:/usr/man:/usr/share/man:/usr/local/man:/usr/atria/man:/usr/dt/man:/usr/openwin/man
+  setenv MANPATH ${MANPATH}:/usr/man:/usr/share/man:/usr/local/man:/usr/atria/man:/usr/dt/man:/usr/openwin/man
 endif
 
 if ("`printenv LD_LIBRARY_PATH`" == "") then
-	setenv LD_LIBRARY_PATH /lib:/lib64:/usr/local/lib:/usr/lib:/usr/lib64:/usr/dt/lib:/usr/openwin/lib:/usr/ccs/lib:/usr/atria/lib:/lsi/soft/CFR/lib
+  setenv LD_LIBRARY_PATH /lib:/lib64:/usr/local/lib:/usr/lib:/usr/lib64:/usr/dt/lib:/usr/openwin/lib:/usr/ccs/lib:/usr/atria/lib:/lsi/soft/CFR/lib
 else
-	setenv LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:/lib:/lib64:/usr/local/lib:/usr/lib:/usr/lib64:/usr/dt/lib:/usr/openwin/lib:/usr/ccs/lib:/usr/atria/lib:/lsi/soft/CFR/lib
+  setenv LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:/lib:/lib64:/usr/local/lib:/usr/lib:/usr/lib64:/usr/dt/lib:/usr/openwin/lib:/usr/ccs/lib:/usr/atria/lib:/lsi/soft/CFR/lib
 endif
 
 #----------------------------------------
 # Aliases
 #----------------------------------------
-if ( -f /lsi/vp/bed_shared/env/rc/wat.aliases ) then 
-	source /lsi/vp/bed_shared/env/rc/wat.aliases
-	echo "Aliases Configured"
+if ( -f /lsi/vp/bed_shared/env/rc/wat.aliases ) then
+  source /lsi/vp/bed_shared/env/rc/wat.aliases
+  echo "Aliases Configured"
 endif
 
-
-#---------------------------------------
-# Firmware
-#---------------------------------------
-if ( $CALLISTO == false ) then
-    echo "Loading Global FW cshrc"
-    if ( $NEW_EMT == false ) then
-        #source /lsi/vp/bed_shared/env/rc/wat.sw.cshrc
-        #source /lsi/vp/bed_shared/env/rc/wat.sw-gcc483.cshrc
-    else
-        source /tools/emt_refresh/wat.sw.cshrc
-    endif 
-endif
-
-#---------------------------------------
-# Path updates 
-#---------------------------------------
-
-#if ( $CALLISTO == true ) then
-#    alias sudo "sudo env PATH=$PATH"
-#endif
-
-#setenv PATH /proj/atria/bin:/lsi/vp/bed_shared/ucm/scripts:/lsi/vp/bed_shared/dev/scripts:.:/usr/atria/bin:/magnum/tools/altera/13.1/nios2eds/bin/gnu/H-i686-pc-linux-gnu/bin:/magnum/tools/altera/13.1/nios2eds/sdk2/bin:/magnum/tools/altera/13.1/nios2eds/bin:/magnum/oss/bin:/sbin:/lsi/soft/gnu/gnu_sh_utils/0.0.1/bin:${PATH}:
 if ( $CALLISTO == true ) then
     setenv PATH ${PATH}:/proj/atria/bin:/lsi/vp/bed_shared/ucm/scripts:/lsi/vp/bed_shared/dev/scripts:.:/usr/atria/bin:/sbin
-    #setenv PATH ${PATH}:/proj/atria/bin:/lsi/vp/bed_shared/ucm/scripts:/lsi/vp/bed_shared/dev/scripts:.:/usr/atria/bin:/magnum/tools/altera/14.1a10s_656/nios2eds/bin/gnu/H-x86_64-pc-linux-gnu/bin:/magnum/tools/altera/14.1a10s_656/nios2eds/sdk2/bin:/magnum/tools/altera/14.1a10s_656/nios2eds/bin:/sbin
 else
     setenv PATH ${PATH}:/proj/atria/bin:/lsi/vp/bed_shared/ucm/scripts:/lsi/vp/bed_shared/dev/scripts:.:/usr/atria/bin:/magnum/oss/bin:/sbin
-    #setenv PATH ${PATH}:/proj/atria/bin:/lsi/vp/bed_shared/ucm/scripts:/lsi/vp/bed_shared/dev/scripts:.:/usr/atria/bin:/magnum/tools/altera/14.1a10s_656/nios2eds/bin/gnu/H-x86_64-pc-linux-gnu/bin:/magnum/tools/altera/14.1a10s_656/nios2eds/sdk2/bin:/magnum/tools/altera/14.1a10s_656/nios2eds/bin:/magnum/oss/bin:/sbin
 endif
 
 #VIM!!!!
@@ -246,7 +209,8 @@ set who="%n has %a %l from %M."
 
 if ( `hostname | grep -o watengbuild` == "watengbuild" ) then
     alias mfw             "make -j16 interfaces DEBUG=1 CWARE=1 GCCV=43 FW_ARCH=D7 && make -j16 DEBUG=1 CWARE=1 GCCV=43 FW_ARCH=D7"
-    alias mr12cpufw       "make clean comp all cpu=x86 FWROOT=/lsi/home/colekas/src/r12cpu/build && cdr xcode && cd interface/ProXCodeHostIFApp && make clean all platform=cpu_intel_xeon cpu=x86 FWROOT=/lsi/home/colekas/src/r12cpu/build && cd /vobs/cware/x86/os_wrapper/linux/ && make clean all cpu=x86 && cd /vobs/cware/x86/bsp && make clean all cpu=x86 && cd /vobs/cware/x86/osal && make clean all cpu=x86 && cd /vobs/cware/x86/startup && make clean all cpu=x86 FWROOT=/lsi/home/colekas/src/r12cpu/build"
+    alias mr12cpufw       "make clean comp all cpu=x86 FWROOT=/lsi/home/colekas/src/r12cpu/build"
+    alias mr12cpubin      "cdr xcode && cd interface/ProXCodeHostIFApp && make clean all platform=cpu_intel_xeon cpu=x86 FWROOT=/lsi/home/colekas/src/r12cpu/build && cd /vobs/cware/x86/os_wrapper/linux/ && make clean all cpu=x86 && cd /vobs/cware/x86/bsp && make clean all cpu=x86 && cd /vobs/cware/x86/osal && make clean all cpu=x86 && cd /vobs/cware/x86/startup && make clean all cpu=x86 FWROOT=/lsi/home/colekas/src/r12cpu/build"
     alias gvim            "/magnum/oss/bin/gvim"
     alias v               "gvim"
     alias vim             "/magnum/oss/bin/vim"
@@ -271,11 +235,14 @@ alias blist           "cleartool lstype brtype:\!*"
 alias calist          "cleartool describe -cact -fmt %c"
 alias llist           "cleartool lstype lbtype:\!*"
 alias lfind           "ct find -all -version 'lbtype(\!*)' -print"
+alias clock           "cleartool lock activity:\!*@/vobs/fw_pvob"
 alias block           "cleartool lock brtype:\!*"
 alias llock           "cleartool lock lbtype:\!*"
+alias cunlock         "cleartool unlock activity:\!*@/vobs/fw_pvob"
 alias bunlock         "cleartool unlock brtype:\!*"
 alias lunlock         "cleartool unlock lbtype:\!*"
 alias bfind           "ct find -all -branch 'brtype(\!*)' -print"
+alias freplace        "cleartool chevent -replace -cfile \!*.txt activity:\!*@/vobs/fw_pvob"
 alias creplace        "cleartool chevent -replace -cfile /vobs/cware/\!*.txt brtype:\!*"
 alias mfwdxt          "make interfaces CWARE=1 GCCV=43 FW_ARCH=DXT && make CWARE=1 GCCV=43 FW_ARCH=DXT"
 alias ucm-makebaseline "/ms/WaterlooHg/hg/firmware/ucm/scripts/ucm-makebaseline \!*"
@@ -319,11 +286,11 @@ if (-f $SGE_ROOT/default/common/settings.csh) source $SGE_ROOT/default/common/se
 
 if ( $CALLISTO == false ) then
   setenv EMTSOFTPATH /tools/emt_refresh/soft
-  emt -S gnu/make/3.80 /tools/emt_refresh/modules/centos/make/3.81
+#emt -S gnu/make/3.80 /tools/emt_refresh/modules/centos/make/3.81
   #emt -S gnu/ctags/5.5.2 /tools/emt_refresh/modules/centos/ctags/5.6
-  emt -S gnu/vim/6.3 /tools/emt_refresh/modules/centos/vim-enhanced/7.0.109
+#emt -S gnu/vim/6.3 /tools/emt_refresh/modules/centos/vim-enhanced/7.0.109
   #emt -S centos/python/2.4.3 /tools/emt_refresh/modules/custom/python/2.7.7
-  emt -S gnu/perl/5.8.3 /tools/emt_refresh/modules/centos/perl/5.8.8
+#emt -S gnu/perl/5.8.3 /tools/emt_refresh/modules/centos/perl/5.8.8
   #emt -S gnu/sed/3.02 /tools/emt_refresh/modules/centos/sed/4.1.5
   #emt -S gnu/binutils/2.13.2.1 /tools/emt_refresh/modules/centos/binutils/2.17.50.0.6
 endif

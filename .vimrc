@@ -9,6 +9,7 @@ if v:version >= 700
   autocmd vimenter * wincmd w
 endif
 
+set ffs=unix
 set exrc
 set secure
 set ruler
