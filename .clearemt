@@ -1,0 +1,14 @@
+#!/bin/tcsh
+
+# Clear emt
+setenv SHELL tcsh
+set EMT_PL = /lsi/soft/emt/bin/emt.pl
+
+if ( $?EMTINIT ) then
+  if ( $EMTINIT == true ) then
+      eval "`$EMT_PL -c`"
+      eval "`$EMT_PL -u all`"
+      eval "`setenv EMTLOADED ""`"
+  endif
+endif
+

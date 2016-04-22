@@ -1,0 +1,26 @@
+#!/bin/tcsh
+
+source ~colekas/.clearemt
+
+# If a parent shell hasn't set LD_LIBRARY_PATH yet, set it to an initial value.
+if ( ! $?LD_LIBRARY_PATH ) then
+	setenv LD_LIBRARY_PATH /lib:/usr/local/lib:/usr/lib:/lsi/soft/CFR/lib:/usr/dt/lib:/usr/openwin/lib:/usr/ccs/lib:/usr/atria/lib
+endif
+
+# Set PATH for running E6AM
+#setenv PATH /vobs/vlsi_release/e60/am/app/${OS}:${PATH}
+
+# Set up EMT if default loadenv view is not configured
+if ( ! $?UCM_DFLT_VIEW ) then
+    eval "`$EMT_PL --init`"
+
+    # Load the software modules.
+    # These will later be put into a single module (e60/sw/1.0).
+    # A single module loads faster, but currently tcsh has
+    # some issues with maximum string length loading many modules.
+
+    echo "Loading EMT modules..."
+
+    eval "`$EMT_PL e60/sw/gcc-4.8.3`"
+endif
+#setenv PATH /usr/bin:$PATH
